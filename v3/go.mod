@@ -1,4 +1,4 @@
-module github.com/Synzack/ldap/v3 latest
+module github.com/Synzack/ldap/v3
 
 go 1.17
 
