@@ -29,6 +29,10 @@ const (
 	ControlTypeMicrosoftShowDeleted = "1.2.840.113556.1.4.417"
 	// ControlTypeMicrosoftServerLinkTTL - https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-adts/f4f523a8-abc0-4b3a-a471-6b2fef135481?redirectedfrom=MSDN
 	ControlTypeMicrosoftServerLinkTTL = "1.2.840.113556.1.4.2309"
+
+	//zach gode---------------------
+	ControlTypeMicrosoftSDFlags = "1.2.840.113556.1.4.801"
+	//end zach code-----------------
 )
 
 // ControlTypeMap maps controls to text descriptions
@@ -40,6 +44,9 @@ var ControlTypeMap = map[string]string{
 	ControlTypeMicrosoftNotification:  "Change Notification - Microsoft",
 	ControlTypeMicrosoftShowDeleted:   "Show Deleted Objects - Microsoft",
 	ControlTypeMicrosoftServerLinkTTL: "Return TTL-DNs for link values with associated expiry times - Microsoft",
+	//zach code-------------------
+	ControlTypeMicrosoftSDFlags: "Control the portion of a Windows security descriptor to retrieve",
+	//end zach code---------------
 }
 
 // Control defines an interface controls provide to encode and describe themselves
@@ -312,6 +319,35 @@ func (c *ControlMicrosoftShowDeleted) String() string {
 func NewControlMicrosoftShowDeleted() *ControlMicrosoftShowDeleted {
 	return &ControlMicrosoftShowDeleted{}
 }
+
+//zach code--------------------------
+type ControlMicrosoftSDFlags struct {
+	Criticality  bool
+	ControlValue int32
+}
+
+func (c *ControlMicrosoftSDFlags) GetControlType() string {
+	return ControlTypeMicrosoftSDFlags
+}
+
+func (c *ControlMicrosoftSDFlags) Encode() *ber.Packet {
+	packet := ber.Encode(ber.ClassUniversal, ber.TypeConstructed, ber.TagSequence, nil, "Control")
+	packet.AppendChild(ber.NewString(ber.ClassUniversal, ber.TypePrimitive, ber.TagOctetString, ControlTypeMicrosoftSDFlags, "Control Type ("+ControlTypeMap[ControlTypeMicrosoftSDFlags]+")"))
+	packet.AppendChild(ber.NewBoolean(ber.ClassUniversal, ber.TypePrimitive, ber.TagBoolean, true, "Criticality"))
+	p2 := ber.Encode(ber.ClassUniversal, ber.TypePrimitive, ber.TagOctetString, nil, "Control Value(SDFlags")
+	seq := ber.Encode(ber.ClassUniversal, ber.TypeConstructed, ber.TagSequence, nil, "SDFlags")
+	seq.AppendChild(ber.NewInteger(ber.ClassUniversal, ber.TypePrimitive, ber.TagInteger, c.ControlValue, "Flags"))
+	p2.AppendChild(seq)
+
+	packet.AppendChild(p2)
+	return packet
+}
+
+func (c *ControlMicrosoftSDFlags) String() string {
+	return fmt.Sprintf("Control Type %s (%q), Criticality %t, Control Value: %d", "1.2.840.113556.1.4.801", "1.2.840.113556.1.4.801", c.Criticality, c.ControlValue)
+}
+
+//zach code---------------------------
 
 // ControlMicrosoftServerLinkTTL implements the control described in https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-adts/f4f523a8-abc0-4b3a-a471-6b2fef135481?redirectedfrom=MSDN
 type ControlMicrosoftServerLinkTTL struct{}
