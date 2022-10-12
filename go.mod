@@ -1,4 +1,4 @@
-module github.com/Synzack/ldap
+module github.com/go-ldap/ldap/v3
 
 go 1.17
 
@@ -14,5 +14,3 @@ require (
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/go-ldap/ldap => github.com/Synzack/ldap latest
